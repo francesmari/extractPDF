@@ -1,0 +1,30 @@
+name: Run PDF Extractor
+
+on:
+  repository_dispatch:  # Triggered by Power Automate
+    types: [trigger-workflow]
+
+  workflow_dispatch:  # Allows manual execution from GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pymupdf O365
+
+      - name: Run script
+        env:
+          ONEDRIVE_CLIENT_ID: ${{ secrets.ONEDRIVE_CLIENT_ID }}
+          ONEDRIVE_CLIENT_SECRET: ${{ secrets.ONEDRIVE_CLIENT_SECRET }}
+        run: python extract_pdf.py
